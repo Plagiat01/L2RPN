@@ -25,7 +25,8 @@ class DQNAgent(BaseAgent):
       actions = np.load(os.path.join(curr_dir, "top1000_actions.npz"), allow_pickle=True)["actions"]
       for action in actions:
         self.all_actions.append(env.action_space.from_vect(action))
-      self.all_actions = np.asarray(self.all_actions)
+      self.all_actions = np.asarray(self.all_actions[:50])
+      print(f"Action space: {self.all_actions.shape[0]} actions")
 
       self.dqn = DQN(self, (lambda : DenseNN(env.current_obs.to_vect().shape, self.all_actions.shape[0])))
 
@@ -62,7 +63,14 @@ class RandomAgent(BaseAgent):
 
 
 dqn_agent = DQNAgent(env, ".")
+random_agent = RandomAgent(env, ".")
 nothing_agent = DoNothingAgent(env.action_space)
-dqn_agent.train(env, 1000)
 
-dqn_agent.dqn.save_nns("DQN_NN/")
+dqn_agent.train(env, 1000)
+dqn_agent.dqn.save_nns("DQN_NN")
+
+
+dqn_agent.dqn.load_nns("DQN_NN")
+evaluate(random_agent, "RANDOM")
+evaluate(nothing_agent, "NOTHING")
+evaluate(dqn_agent, "DQN")

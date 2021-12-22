@@ -55,7 +55,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def evaluate(agent, env,
+def evaluate(agent, name,
              logs_path=None,
              nb_episode=1,
              nb_process=1,
@@ -63,6 +63,7 @@ def evaluate(agent, env,
              verbose=False,
              **kwargs):
 
+    env = grid2op.make("l2rpn_neurips_2020_track2_small", backend=LightSimBackend())
     runner_params = env.get_params_for_runner()
     runner_params["verbose"] = verbose
     
@@ -81,6 +82,7 @@ def evaluate(agent, env,
         pbar=False)
 
     # Print summary
+    print("\033[92m"+ f"####### {name} #######" + "\033[0m")
     print("Evaluation summary:")
     for _, chron_name, cum_reward, nb_time_step, max_ts in res:
         msg_tmp = "\tFor chronics located at {}\n".format(chron_name)

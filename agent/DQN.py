@@ -46,7 +46,7 @@ class DQN:
     self.main_nn.fit(X, y, batch_size, shuffle=True)
   
 
-  def replay_exp(self, env, nb_episode=1000, max_replay_memory=50_000, main_update_step=28, target_update_step=300):
+  def replay_exp(self, env, nb_episode=1000, max_replay_memory=50_000, main_update_step=5, target_update_step=100):
     epsilon = 1
     max_epsilon = 1
     min_epsilon = 0.001

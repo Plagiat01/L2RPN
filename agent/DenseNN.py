@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-tf.random.seed(42)
+tf.random.set_seed(42)
 
 class DenseNN:
   def __init__(self, input_shape, nb_action):
