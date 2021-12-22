@@ -26,9 +26,9 @@ class DQNAgent(BaseAgent):
       for action in actions:
         self.all_actions.append(env.action_space.from_vect(action))
       self.all_actions = np.asarray(self.all_actions[:50])
-      print(f"Action space: {self.all_actions.shape[0]} actions")
+      print(f"\nAction space: {self.all_actions.shape[0]} actions")
 
-      self.dqn = DQN(self, (lambda : DenseNN(env.current_obs.to_vect().shape, self.all_actions.shape[0])))
+      self.dqn = DQN(self, (lambda : DenseNN(env.current_obs.to_vect().shape[0], self.all_actions.shape[0])))
 
     def act(self, observation, reward, done):
       """The action that your agent will choose depending on the observation, the reward, and whether the state is terminal"""
@@ -66,9 +66,8 @@ dqn_agent = DQNAgent(env, ".")
 random_agent = RandomAgent(env, ".")
 nothing_agent = DoNothingAgent(env.action_space)
 
-dqn_agent.train(env, 3)
+dqn_agent.train(env, 1000)
 dqn_agent.dqn.save_nn("DQN_NN")
-
 
 dqn_agent.dqn.load_nn("DQN_NN")
 evaluate(random_agent, "RANDOM")

@@ -1,6 +1,6 @@
 from grid2op.Agent import BaseAgent
 import gym
-from DenseNN import DenseNN
+from agent.DenseNN import DenseNN
 from DQN import DQN
 import numpy as np
 

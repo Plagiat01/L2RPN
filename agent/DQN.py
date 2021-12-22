@@ -2,9 +2,10 @@ import numpy as np
 import random
 from collections import deque
 import os
+from utils import RANDOM_SEED
 
-np.random.seed(42)
-random.seed(42)
+np.random.seed(RANDOM_SEED)
+random.seed(RANDOM_SEED)
 
 class DQN:
   def __init__(self, agent, create_nn):
@@ -16,7 +17,7 @@ class DQN:
 
   def train(self, replay_memory):
     batch_size = 32
-    if len(replay_memory) < 1000: return
+    if len(replay_memory) < 150: return
     mini_batch = random.sample(replay_memory, batch_size)
 
     lr = 0.7
@@ -90,10 +91,10 @@ class DQN:
 
   
   def save_nn(self, path):
-    self.main_nn.save(os.path.join(path, "main_nn.h5"))
+    self.main_nn.save(os.path.join(path, "main_nn.pth"))
   
   def load_nn(self, path):
-    self.main_nn.load(os.path.join(path, "main_nn.h5"))
+    self.main_nn.load(os.path.join(path, "main_nn.pth"))
     self.main_nn.copy_weights(self.target_nn)
 
 
