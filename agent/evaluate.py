@@ -82,7 +82,7 @@ def evaluate(agent, name,
         pbar=False)
 
     # Print summary
-    print("\033[92m"+ f"####### {name} #######" + "\033[0m")
+    print("\033[92m"+ f"####### {name} #######")
     print("Evaluation summary:")
     for _, chron_name, cum_reward, nb_time_step, max_ts in res:
         msg_tmp = "\tFor chronics located at {}\n".format(chron_name)
@@ -90,3 +90,4 @@ def evaluate(agent, name,
         msg_tmp += "\t\t - number of time steps completed: {:.0f} / {:.0f}".format(
             nb_time_step, max_ts)
         print(msg_tmp)
+    print("\033[0m")
