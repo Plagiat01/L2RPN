@@ -3,6 +3,9 @@ import random
 from collections import deque
 import os
 
+np.random.seed(42)
+random.seed(42)
+
 class DQN:
   def __init__(self, agent, create_nn):
     self.agent = agent
@@ -12,12 +15,12 @@ class DQN:
 
 
   def train(self, replay_memory):
-    batch_size = 128
+    batch_size = 32
     if len(replay_memory) < 1000: return
     mini_batch = random.sample(replay_memory, batch_size)
 
     lr = 0.7
-    discount = 0.618
+    discount = 0.7
     
     current_states     = np.asarray([step[0] for step in mini_batch])
     current_qs_list    = self.main_nn.predict(current_states)
@@ -43,10 +46,10 @@ class DQN:
     self.main_nn.fit(X, y, batch_size, shuffle=True)
   
 
-  def replay_exp(self, env, nb_episode=150, max_replay_memory=50_000, main_update_step=4, target_update_step=100):
+  def replay_exp(self, env, nb_episode=1000, max_replay_memory=50_000, main_update_step=28, target_update_step=300):
     epsilon = 1
     max_epsilon = 1
-    min_epsilon = 0.01
+    min_epsilon = 0.001
     decay = 0.01
 
     replay_memory = deque(maxlen=max_replay_memory)

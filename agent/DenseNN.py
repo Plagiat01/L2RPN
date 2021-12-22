@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+tf.random.seed(42)
+
 class DenseNN:
   def __init__(self, input_shape, nb_action):
     learning_rate = 0.001
