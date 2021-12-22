@@ -62,7 +62,7 @@ class DQN:
     steps_update = 0
 
     for episode in range(nb_episodes):
-      if episode + 1 % 100 == 0:
+      if (episode + 1) % 100 == 0:
         self.save_nn(path)
 
 
