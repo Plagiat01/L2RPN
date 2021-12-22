@@ -17,3 +17,9 @@ class DenseNN:
   
   def copy_weights(self, model):
     model.model.set_weights(self.model.get_weights())
+  
+  def save(self, filename):
+    self.model.save(filename)
+  
+  def load(self, filename):
+    self.model = tf.keras.models.load_model(filename)

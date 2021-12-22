@@ -1,6 +1,7 @@
 import numpy as np
 import random
 from collections import deque
+import os
 
 class DQN:
   def __init__(self, agent, create_model):
@@ -85,6 +86,15 @@ class DQN:
       print(f"Episode {episode} -> survived steps: {total_steps} total reward: {sum_reward:.2f}")
 
   
+  def save_models(self, path):
+    self.main_model.save(os.path.join(path, "main_model.h5"))
+    self.target_model.save(os.path.join(path, "target_model.h5"))
+  
+  def load_models(self, path):
+    self.main_model.load(os.path.join(path, "main_model.h5"))
+    self.target_model.load(os.path.join(path, "target_model.h5"))
+
+
   def select_action(self, obs):
     action_list = self.main_model.predict(np.expand_dims(obs.to_vect(), axis=0))
     action = np.argmax(action_list)
