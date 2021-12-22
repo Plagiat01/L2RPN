@@ -90,7 +90,7 @@ class DQN:
 
   
   def save_nn(self, path):
-    self.main.save(os.path.join(path, "main_nn.h5"))
+    self.main_nn.save(os.path.join(path, "main_nn.h5"))
   
   def load_nn(self, path):
     self.main_nn.load(os.path.join(path, "main_nn.h5"))

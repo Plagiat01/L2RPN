@@ -66,7 +66,7 @@ dqn_agent = DQNAgent(env, ".")
 random_agent = RandomAgent(env, ".")
 nothing_agent = DoNothingAgent(env.action_space)
 
-dqn_agent.train(env, 1000)
+dqn_agent.train(env, 3)
 dqn_agent.dqn.save_nn("DQN_NN")
 
 
