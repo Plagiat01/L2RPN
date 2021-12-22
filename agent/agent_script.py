@@ -65,4 +65,4 @@ dqn_agent = DQNAgent(env, ".")
 nothing_agent = DoNothingAgent(env.action_space)
 dqn_agent.train(env, 300)
 
-dqn_agent.dqn.save_models("DQN_NN/")
+dqn_agent.dqn.save_nns("DQN_NN/")

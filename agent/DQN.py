@@ -4,11 +4,11 @@ from collections import deque
 import os
 
 class DQN:
-  def __init__(self, agent, create_model):
+  def __init__(self, agent, create_nn):
     self.agent = agent
-    self.main_model = create_model()
-    self.target_model = create_model()
-    self.main_model.copy_weights(self.target_model)
+    self.main_nn = create_nn()
+    self.target_nn = create_nn()
+    self.main_nn.copy_weights(self.target_nn)
 
 
   def train(self, replay_memory):
@@ -20,9 +20,9 @@ class DQN:
     discount = 0.618
     
     current_states     = np.asarray([step[0] for step in mini_batch])
-    current_qs_list    = self.main_model.predict(current_states)
+    current_qs_list    = self.main_nn.predict(current_states)
     next_states        = np.asarray([step[2] for step in mini_batch])
-    next_qs_list       = self.target_model.predict(next_states)
+    next_qs_list       = self.target_nn.predict(next_states)
 
     X = np.zeros((batch_size, current_states[0].shape[0]))
     y = np.zeros((batch_size, current_qs_list[0].shape[0]))
@@ -40,7 +40,7 @@ class DQN:
       X[i] = obs
       y[i] = current_qs    
     
-    self.main_model.fit(X, y, batch_size, shuffle=True)
+    self.main_nn.fit(X, y, batch_size, shuffle=True)
   
 
   def replay_exp(self, env, nb_episode=150, max_replay_memory=50_000, main_update_step=4, target_update_step=100):
@@ -64,7 +64,7 @@ class DQN:
         if np.random.rand() <= epsilon:
           action = np.random.randint(self.agent.all_actions.shape[0])
         else:
-          action_list = self.main_model.predict(np.expand_dims(obs.to_vect(), axis=0))
+          action_list = self.main_nn.predict(np.expand_dims(obs.to_vect(), axis=0))
           action = np.argmax(action_list)
         
         new_obs, reward, done, _ = env.step(self.agent.all_actions[action])
@@ -77,8 +77,8 @@ class DQN:
         sum_reward += reward
       
       if steps_update >= target_update_step:
-        print("\033[92m"+"Copying main model weights to the target model weights" + "\033[0m")
-        self.main_model.copy_weights(self.target_model)
+        print("\033[92m"+"Copying main network weights to the target network weights" + "\033[0m")
+        self.main_nn.copy_weights(self.target_nn)
         steps_update = 0
 
       epsilon = min_epsilon + (max_epsilon - min_epsilon) * np.exp(-decay * episode)
@@ -86,16 +86,16 @@ class DQN:
       print(f"Episode {episode} -> survived steps: {total_steps} total reward: {sum_reward:.2f}")
 
   
-  def save_models(self, path):
-    self.main_model.save(os.path.join(path, "main_model.h5"))
-    self.target_model.save(os.path.join(path, "target_model.h5"))
+  def save_nns(self, path):
+    self.main_nn.save(os.path.join(path, "main_nn.h5"))
+    self.target_nn.save(os.path.join(path, "target_nn.h5"))
   
-  def load_models(self, path):
-    self.main_model.load(os.path.join(path, "main_model.h5"))
-    self.target_model.load(os.path.join(path, "target_model.h5"))
+  def load_nns(self, path):
+    self.main_nn.load(os.path.join(path, "main_nn.h5"))
+    self.target_nn.load(os.path.join(path, "target_nn.h5"))
 
 
   def select_action(self, obs):
-    action_list = self.main_model.predict(np.expand_dims(obs.to_vect(), axis=0))
+    action_list = self.main_nn.predict(np.expand_dims(obs.to_vect(), axis=0))
     action = np.argmax(action_list)
     return self.agent.all_actions[action]
