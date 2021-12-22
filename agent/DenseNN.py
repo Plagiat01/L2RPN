@@ -7,7 +7,6 @@ class DenseNN:
     learning_rate = 0.001
     self.model = tf.keras.Sequential()
     self.model.add(tf.keras.layers.Dense(2048, input_shape=input_shape, activation="relu"))
-    self.model.add(tf.keras.layers.Dense(1024, activation="relu"))
     self.model.add(tf.keras.layers.Dense(nb_action, activation="linear"))
     self.model.compile(loss="mean_squared_error", optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), metrics=['accuracy'])
 

@@ -67,10 +67,10 @@ random_agent = RandomAgent(env, ".")
 nothing_agent = DoNothingAgent(env.action_space)
 
 dqn_agent.train(env, 1000)
-dqn_agent.dqn.save_nns("DQN_NN")
+dqn_agent.dqn.save_nn("DQN_NN")
 
 
-dqn_agent.dqn.load_nns("DQN_NN")
+dqn_agent.dqn.load_nn("DQN_NN")
 evaluate(random_agent, "RANDOM")
 evaluate(nothing_agent, "NOTHING")
 evaluate(dqn_agent, "DQN")

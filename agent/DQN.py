@@ -89,13 +89,12 @@ class DQN:
       print(f"Episode {episode} -> survived steps: {total_steps} total reward: {sum_reward:.2f}")
 
   
-  def save_nns(self, path):
-    self.main_nn.save(os.path.join(path, "main_nn.h5"))
-    self.target_nn.save(os.path.join(path, "target_nn.h5"))
+  def save_nn(self, path):
+    self.main.save(os.path.join(path, "main_nn.h5"))
   
-  def load_nns(self, path):
+  def load_nn(self, path):
     self.main_nn.load(os.path.join(path, "main_nn.h5"))
-    self.target_nn.load(os.path.join(path, "target_nn.h5"))
+    self.main_nn.copy_weights(self.target_nn)
 
 
   def select_action(self, obs):
