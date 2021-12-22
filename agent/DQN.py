@@ -50,7 +50,7 @@ class DQN:
   def replay_exp(self, env, nb_episode=1000, max_replay_memory=50_000, main_update_step=5, target_update_step=100):
     epsilon = 1
     max_epsilon = 1
-    min_epsilon = 0.001
+    min_epsilon = 0.01
     decay = 0.01
 
     replay_memory = deque(maxlen=max_replay_memory)
@@ -81,7 +81,7 @@ class DQN:
         sum_reward += reward
       
       if steps_update >= target_update_step:
-        print("\033[92m"+"Copying main network weights to the target network weights" + "\033[0m")
+        print("\033[92m"+"Copying main network weights to the target network" + "\033[0m")
         self.main_nn.copy_weights(self.target_nn)
         steps_update = 0
 

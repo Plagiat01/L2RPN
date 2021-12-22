@@ -1,6 +1,6 @@
 from grid2op.Agent import BaseAgent
 import gym
-from agent.DenseNN import DenseNN
+from DenseNN import DenseNN
 from DQN import DQN
 import numpy as np
 
@@ -23,7 +23,7 @@ class DQNAgent(BaseAgent):
         self.all_actions.append(env.action_space.from_vect(action))
       self.all_actions = np.asarray(self.all_actions)
       """
-      self.dqn = DQN(self, (lambda : DenseNN((4,), self.all_actions.shape[0])))
+      self.dqn = DQN(self, (lambda : DenseNN(4, self.all_actions.shape[0])))
 
     def act(self, observation, reward, done):
       """The action that your agent will choose depending on the observation, the reward, and whether the state is terminal"""

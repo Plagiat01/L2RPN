@@ -1,45 +1,27 @@
-from torch_model_wrapper import TorchWrapper
-import torch
-import torch.nn as nn
-
+import tensorflow as tf
 from utils import RANDOM_SEED
 
-class NN(nn.Module):
-  def __init__(self, input_features, output_features):
-    super().__init__()
-
-    self.linears = nn.Sequential(
-                    nn.Linear(input_features, 2048),
-                    nn.ReLU(),
-                    nn.Dropout(0.5),
-                    nn.Linear(2048, output_features)
-                  )
-  
-  def forward(self, x):
-    return self.linears(x)
+tf.random.set_seed(RANDOM_SEED)
 
 class DenseNN:
-  def __init__(self, input_features, nb_action):
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    loss = nn.MSELoss()
-    network = NN(input_features, nb_action)
-    optimizer = torch.optim.Adam(network.parameters(), lr=0.001)
-    network.to(device)
-
-    self.wrapper = TorchWrapper(network, device, optimizer, loss)
-    print(f"{self.wrapper.get_parameters(trainable=True)} trainable parameters.")
+  def __init__(self, input_shape, nb_action):
+    learning_rate = 0.001
+    self.model = tf.keras.Sequential()
+    self.model.add(tf.keras.layers.Dense(2048, input_shape=(input_shape,), activation="relu"))
+    self.model.add(tf.keras.layers.Dense(nb_action, activation="linear"))
+    self.model.compile(loss="mean_squared_error", optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), metrics=['accuracy'])
 
   def predict(self, X):
-    return self.wrapper.predict(X)
+    return self.model.predict(X)
 
   def fit(self, X, y, batch_size, shuffle):
-    self.wrapper.fit(X, y, verbose=0, batch_size=batch_size, shuffle=shuffle)
+    self.model.fit(X, y, verbose=0, batch_size=batch_size, shuffle=shuffle)
   
   def copy_weights(self, model):
-    model.wrapper.nn.load_state_dict(self.wrapper.nn.state_dict())
+    model.model.set_weights(self.model.get_weights())
   
   def save(self, filename):
-    self.wrapper.save(filename)
+    self.model.save(filename)
   
   def load(self, filename):
-    self.wrapper.load(filename)
+    self.model = tf.keras.models.load_model(filename)
