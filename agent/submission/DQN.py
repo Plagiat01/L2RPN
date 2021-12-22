@@ -47,7 +47,12 @@ class DQN:
     self.main_nn.fit(X, y, batch_size, shuffle=True)
   
 
-  def replay_exp(self, env, nb_episode=1000, max_replay_memory=50_000, main_update_step=5, target_update_step=100):
+  def replay_exp(self, env, path,
+                 nb_episodes=1000,
+                 max_replay_memory=50_000,
+                 main_update_step=5,
+                 target_update_step=100):
+
     epsilon = 1
     max_epsilon = 1
     min_epsilon = 0.001
@@ -56,7 +61,11 @@ class DQN:
     replay_memory = deque(maxlen=max_replay_memory)
     steps_update = 0
 
-    for episode in range(nb_episode):
+    for episode in range(nb_episodes):
+      if episode + 1 % 100 == 0:
+        self.save_nn(path)
+
+
       obs = self.agent.convert_obs(env.reset())
       done = False
 

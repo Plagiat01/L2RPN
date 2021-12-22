@@ -42,10 +42,7 @@ class DQNAgent(BaseAgent):
             v = observation._get_array_from_attr_name(el).astype(np.float32)
             v_fix = np.nan_to_num(v)
             li_vect.append(v_fix)
-    return np.concatenate(li_vect)[:2238]
-
-  def train(self, env, nb_episode):
-    self.dqn.replay_exp(env, nb_episode=nb_episode)
+    return np.concatenate(li_vect)[:2238]  
     
 
 class RandomAgent(BaseAgent):
