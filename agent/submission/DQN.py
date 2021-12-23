@@ -15,7 +15,7 @@ class DQN:
     self.main_nn.copy_weights(self.target_nn)
 
 
-  def train(self, replay_memory):
+  def learn(self, replay_memory):
     batch_size = 32
     if len(replay_memory) < 1000: return
     mini_batch = random.sample(replay_memory, batch_size)
@@ -61,10 +61,10 @@ class DQN:
     replay_memory = deque(maxlen=max_replay_memory)
     steps_update = 0
 
+    # Save the network every 100 episodes
     for episode in range(nb_episodes):
       if (episode + 1) % 100 == 0:
         self.save_nn(path)
-
 
       obs = self.agent.convert_obs(env.reset())
       done = False
@@ -85,7 +85,7 @@ class DQN:
         replay_memory.append((obs, action, new_obs, reward, done))
 
         if steps_update % main_update_step == 0 or done:
-          self.train(replay_memory)
+          self.learn(replay_memory)
 
         obs = new_obs
         sum_reward += reward
@@ -107,9 +107,8 @@ class DQN:
     self.main_nn.load(os.path.join(path, "main_nn.h5"))
     self.main_nn.copy_weights(self.target_nn)
 
-
   def select_action(self, obs):
-    obs = self.agent.convert_obs(obs)
-    action_list = self.main_nn.predict(np.expand_dims(obs, axis=0))
+    obs_converted = self.agent.convert_obs(obs)
+    action_list = self.main_nn.predict(np.expand_dims(obs_converted, axis=0))
     action = np.argmax(action_list)
     return self.agent.all_actions[action]

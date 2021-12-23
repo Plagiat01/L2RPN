@@ -1,0 +1,146 @@
+\documentclass[a4paper]{article}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage[a4paper, left=2.85cm, right=2.85cm]{geometry}
+\usepackage{graphicx}
+\usepackage[nottoc]{tocbibind}
+\usepackage[bottom]{footmisc}
+\graphicspath{{images/}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Paris-Saclay University -- 23/12/2021}
+\lhead{\small Gaëtan Serré -- Master AI}
+\rfoot{\thepage}
+
+\begin{document}
+
+\newgeometry{
+  bottom=1.5cm
+}
+\setlength{\headheight}{13.59999pt}
+\addtolength{\topmargin}{-1.59999pt}
+
+\begin{center}
+  \vspace*{5cm}
+
+  \textbf{\large Learning to Run a Power Network Energies of the future and carbon neutrality}
+
+  \vspace*{1cm}
+
+  Gaëtan Serré \\
+  {\ttfamily gaetan.serre@universite-paris-saclay.fr}
+
+  \vspace*{10cm}
+
+  \vfill
+  \noindent\rule{\textwidth}{0.4pt}
+  \begin{figure}[H]
+      \centering
+      \begin{subfigure}{.35\textwidth}
+          \includegraphics[width=\textwidth]{ups-logo.png}
+      \end{subfigure}
+  \end{figure}
+\end{center}
+\pagenumbering{gobble}
+
+\pagebreak
+\restoregeometry
+
+\pagenumbering{arabic}
+
+\section{Algorithm \& Results}
+The goal of this exercise was to provide a reinforcement learning solution to the challenge
+\textit{L2RPN NEURIPS 2020}\cite{L2RPN}. I chose to implement a Deep Q-Learning algorithm.
+For reasons of time and computational power, I was able to train my model during 1,000 episodes
+considering only 50 actions (including the \textit{do-nothing} action). I used the default reward.
+We can see on \ref{table:results} that the more the number of episodes increases, the longer the model survives
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|l|c|r|}
+    \hline
+    Episode & Average steps survived & Average total reward \\
+    \hline
+    0-100 & 16 & 6,000 \\
+    \hline
+    100-300 & 32 & 20,000 \\
+    \hline
+    400-500 & 100 & 100,000\\
+    \hline
+    600-700 & 500 & 500,000\\
+    \hline
+  \end{tabular}
+  \caption{Summary of the results of the training phase}
+  \label{table:results}
+\end{table}
+
+My model reaches a score of $-2.432371$ on the competition, which is worse than the \textit{do-nothing}
+strategy, however, with more episodes and some optimizations on the neural network
+used or the selection of the power grid features used to train it,
+I think my algorithm might have a better score.
+
+
+\section{Difficulties}
+During these few days, I encountered some difficulties.
+\begin{itemize}
+  \item The first one was first of all
+        understand the purpose of the challenge and what was the stake of the problem 
+        because I was not familiar with power grid.
+        The starting kit and the paper
+        \textit{Learning to run a Power Network Challenge: a Retrospective Analysis}
+        \cite{marot2021learning} helped me a lot.
+  \item Another difficulty was to use the \textit{grid2op} library.
+        I had to do a lot of testing to find out what was available to me
+        to make a reinforcement learning model. The starting kit also helped me a lot.
+  \item The choice of the model was quite natural, I had already implemented a Q-Learning
+        algorithm and I thought that Deep Q-Learning was very suitable for the problem.
+        However, I had never implemented it before so I had to follow some tutorials.
+  \item Features selection was also a problem. Beyond a version error of \textit{grid2op}
+        that gave me a hard time,
+        looking at the public submissions, I could see that the best teams were selecting features
+        of the power grid. As I don't have the expert knowledge to do the same,
+        I decided to keep them all but it is surely not the most optimized solution.
+  \item The space action having more than 70,000 possible actions, I had to select only a subset of them
+        in order to save computing time. I was able to use the file \textit{top1000\_actions.npz} provided
+        by the winning team \cite{Zhou2021ActionSB}. This file contains the 1,000 best actions according to them.
+        I chose to keep only the first 50 while being sure that the \textit{do-nothing} action is included.
+        This way, I knew that I could never have the best solution but I could do as good
+        as the \textit{do-nothing} agent.
+  \item The last difficulty was to participate in a more "professional" competition
+        than the ones I had participated in.
+        More specifically, formatting my submissions took a lot of time.
+
+\end{itemize}
+
+\section{What I have learned}
+By surpassing the difficulties mentioned above, I learned to implement a
+Deep Q-Learning algorithm and to participate in a professional competition. Thanks to
+\textit{grid2op}, I was able to learn the vocabulary and interfaces
+of reinforcement learning. My knowledge in this domain came from
+personal projects in which I implemented everything \textit{from scratch},
+so I didn't have this general culture. Finally, I had an overview of the problem of managing
+power grids and what is at stake for our society.
+
+\section{Conclusion}
+Before I even started, I was already very motivated by this internship.
+I learned about reinforcement learning through its application
+in game theory and I have been very interested in it since then.
+Thanks to this challenge, I discovered a more "realistic" application than Go
+or chess of reinforcement learning and I really liked it.
+I would like to go deeper into the problem by improving my algorithm or
+or by trying others.
+
+\bibliographystyle{abbrv}
+\bibliography{refs}
+
+
+\end{document}

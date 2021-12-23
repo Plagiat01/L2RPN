@@ -1,0 +1,18 @@
+\begin{thebibliography}{1}
+
+\bibitem{L2RPN}
+L2rpn neurips 2020 - adaptability track.
+\newblock \href{https://competitions.codalab.org/competitions/25427}{website}.
+
+\bibitem{marot2021learning}
+A.~Marot, B.~Donnot, G.~Dulac-Arnold, A.~Kelly, A.~O'Sullivan, J.~Viebahn,
+  M.~Awad, I.~Guyon, P.~Panciatici, and C.~Romero.
+\newblock Learning to run a power network challenge: a retrospective analysis,
+  2021.
+
+\bibitem{Zhou2021ActionSB}
+B.~Zhou, H.~Zeng, Y.~Liu, K.~Li, F.~Wang, and H.~Tian.
+\newblock Action set based policy optimization for safe power grid management.
+\newblock 2021.
+
+\end{thebibliography}
