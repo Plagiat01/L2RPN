@@ -23,7 +23,7 @@ class DQNAgent(BaseAgent):
     self.all_actions = np.asarray(self.all_actions[:max_actions])
 
 
-    self.dqn = DQN(self, (lambda : DenseNN(2238, max_actions)))
+    self.dqn = DQN(self, (lambda : DenseNN(4116, max_actions)))
 
   def act(self, observation, reward, done):
     """The action that your agent will choose depending on the observation, the reward, and whether the state is terminal"""
@@ -32,17 +32,11 @@ class DQNAgent(BaseAgent):
     return self.dqn.select_action(observation)
 
   @staticmethod
-  def convert_obs(observation):
-    tmp_list_vect = ['prod_p','load_p','p_or','a_or','p_ex','a_ex','rho','topo_vect','line_status',
-                      'timestep_overflow','time_before_cooldown_line','time_before_cooldown_sub']
-
-    li_vect=  []
-    for el in tmp_list_vect:
-        if el in observation.attr_list_vect:
-            v = observation._get_array_from_attr_name(el).astype(np.float32)
-            v_fix = np.nan_to_num(v)
-            li_vect.append(v_fix)
-    return np.concatenate(li_vect)[:2238]  
+  def convert_obs(obs):
+    obs_vec = obs.to_vect()
+    res = np.zeros(4116)
+    res[:obs_vec.shape[0]] = obs_vec
+    return res
     
 
 class RandomAgent(BaseAgent):
@@ -67,6 +61,6 @@ class RandomAgent(BaseAgent):
     return np.random.choice(self.all_actions)
 
 def make_agent(env, this_directory_path):
-  my_agent = DQNAgent(env, 100, this_directory_path)
+  my_agent = DQNAgent(env, 50, this_directory_path)
   my_agent.dqn.load_nn(os.path.join(this_directory_path, "DQN_NN"))
   return my_agent
