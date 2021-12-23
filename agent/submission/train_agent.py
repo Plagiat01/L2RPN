@@ -1,4 +1,4 @@
-from .agent import DQNAgent, RandomAgent
+from .agent import DQNAgent
 from grid2op.Agent import DoNothingAgent
 from grid2op import make
 from lightsim2grid import LightSimBackend
