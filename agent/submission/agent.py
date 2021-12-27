@@ -22,8 +22,8 @@ class DQNAgent(BaseAgent):
     # Keep only 'max_actions' actions
     self.all_actions = np.asarray(self.all_actions[:max_actions])
 
-
-    self.dqn = DQN(self, (lambda : DenseNN(self.convert_obs(env.current_obs).shape[0], max_actions)))
+    create_network = lambda : DenseNN(self.convert_obs(env.current_obs).shape[0], max_actions)
+    self.dqn = DQN(self, env.reward_range[0], create_network)
 
   def act(self, observation, reward, done):
     """The action that your agent will choose depending on the observation, the reward, and whether the state is terminal"""

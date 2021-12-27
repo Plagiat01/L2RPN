@@ -17,51 +17,12 @@ import argparse
 import grid2op
 from lightsim2grid import LightSimBackend
 
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Eval baseline RLAgent")
-    parser.add_argument(
-        "--load_path",
-        default='./saved_files',
-        help="The path to the model [.h5]")
-    parser.add_argument(
-        "--logs_path",
-        required=False,
-        default='./logs_path',
-        type=str,
-        help="Path to output logs directory")
-    parser.add_argument(
-        "--nb_episode",
-        required=False,
-        default=1,
-        type=int,
-        help="Number of episodes to evaluate")
-    parser.add_argument(
-        "--nb_process",
-        required=False,
-        default=1,
-        type=int,
-        help="Number of cores to use")
-    parser.add_argument(
-        "--max_steps",
-        required=False,
-        default=-1,
-        type=int,
-        help="Maximum number of steps per scenario")
-    parser.add_argument(
-        "--save_gif", action='store_true', help="Enable GIF Output")
-    parser.add_argument(
-        "--verbose", action='store_true', help="Verbose runner output")
-    return parser.parse_args()
-
-
 def evaluate(agent, name,
              logs_path=None,
              nb_episode=1,
              nb_process=1,
              max_steps=-1,
-             verbose=False,
-             **kwargs):
+             verbose=False):
 
     env = grid2op.make("l2rpn_neurips_2020_track2_small", backend=LightSimBackend())
     runner_params = env.get_params_for_runner()

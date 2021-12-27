@@ -61,7 +61,7 @@
 \section{Algorithm \& Results}
 The goal of this exercise was to provide a reinforcement learning solution to the challenge
 \textit{L2RPN NEURIPS 2020}\cite{L2RPN}. I chose to implement a Deep Q-Learning algorithm.
-For reasons of time and computational power, I was able to train my model during 1,000 episodes
+For reasons of time and computational power, I was able to train my model during 2,000 episodes
 considering only 50 actions (including the \textit{do-nothing} action). I used the default reward.
 We can see on \ref{table:results} that the more the number of episodes increases, the longer the model survives
 \begin{table}[H]
@@ -80,12 +80,16 @@ We can see on \ref{table:results} that the more the number of episodes increases
     \hline
     800-1000 & 900 & 900,000\\
     \hline
+    1000-1500 & 1200 & 1,000,000\\
+    \hline
+    1500-2000 & 2000 & 1,800,000\\
+    \hline
   \end{tabular}
   \caption{Summary of the results of the training phase}
   \label{table:results}
 \end{table}
 
-My model reaches a score of $1.064424$ on the competition, which is slightly better than the \textit{do-nothing}
+My model reaches a score of $3.423101$ on the competition, which is slightly better than the \textit{do-nothing}
 strategy. I believe that, with more episodes and some optimizations on the neural network
 used or on the selection features of the power grid, my algorithm might have a better score.
 
