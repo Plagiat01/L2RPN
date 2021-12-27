@@ -100,7 +100,7 @@ class DQN:
 
       epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, episode)
 
-      print(f"Episode {episode} -> survived steps: {total_steps} total reward: {sum_reward:.2f}")
+      print(f"({episode+1}/{self.offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_reward:.2f}")
 
       # Save the network and parameters every 100 episodes
       if (episode + 1) % 100 == 0:
