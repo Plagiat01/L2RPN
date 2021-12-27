@@ -3,7 +3,7 @@ import random
 from collections import deque
 import os
 import json
-from .utils import RANDOM_SEED
+from utils import RANDOM_SEED
 
 np.random.seed(RANDOM_SEED)
 random.seed(RANDOM_SEED)
@@ -20,7 +20,7 @@ class DQN:
 
 
   def learn(self, replay_memory):
-    batch_size = 32
+    batch_size = 128
     if len(replay_memory) < 1000: return
     mini_batch = random.sample(replay_memory, batch_size)
 
@@ -55,7 +55,7 @@ class DQN:
     return min_eps + (max_eps - min_eps) * np.exp(-decay * episode)
 
   def replay_exp(self, env, path,
-                 nb_episodes=1000,
+                 nb_episodes=500,
                  max_replay_memory=50_000,
                  main_update_step=5,
                  target_update_step=100):
@@ -68,12 +68,7 @@ class DQN:
     replay_memory = deque(maxlen=max_replay_memory)
     steps_update = 0
 
-    # Save the network and parameters every 100 episodes
     for episode in range(self.offset, self.offset + nb_episodes):
-      if (episode + 1) % 100 == 0:
-        self.save_nn(path)
-        self.save_parameters(episode, path)
-
       obs = self.agent.convert_obs(env.reset())
       done = False
 
@@ -106,6 +101,11 @@ class DQN:
       epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, episode)
 
       print(f"Episode {episode} -> survived steps: {total_steps} total reward: {sum_reward:.2f}")
+
+      # Save the network and parameters every 100 episodes
+      if (episode + 1) % 100 == 0:
+        self.save_nn(path)
+        self.save_parameters(episode, path)
 
 
   # Functions used to choose the best action
