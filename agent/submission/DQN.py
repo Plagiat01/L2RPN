@@ -3,7 +3,7 @@ import random
 from collections import deque
 import os
 import json
-from utils import RANDOM_SEED
+from .utils import RANDOM_SEED
 
 np.random.seed(RANDOM_SEED)
 random.seed(RANDOM_SEED)
@@ -12,7 +12,7 @@ class DQN:
   def __init__(self, agent, loosing_reward, create_nn):
     self.agent = agent
     self.loosing_reward = loosing_reward
-    self.offset = 0
+    self.ep_offset = 0
 
     self.main_nn = create_nn()
     self.target_nn = create_nn()
@@ -63,12 +63,12 @@ class DQN:
     max_epsilon = 1
     min_epsilon = 0.001
     decay = 0.01
-    epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, self.offset)
+    epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, self.ep_offset)
 
     replay_memory = deque(maxlen=max_replay_memory)
     steps_update = 0
 
-    for episode in range(self.offset, self.offset + nb_episodes):
+    for episode in range(self.ep_offset, self.ep_offset + nb_episodes):
       obs = self.agent.convert_obs(env.reset())
       done = False
 
@@ -100,7 +100,7 @@ class DQN:
 
       epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, episode)
 
-      print(f"({episode+1}/{self.offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_reward:.2f}")
+      print(f"({episode+1}/{self.ep_offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_reward:.2f}")
 
       # Save the network and parameters every 100 episodes
       if (episode + 1) % 100 == 0:
@@ -138,11 +138,11 @@ class DQN:
 
   def save_parameters(self, episode, path):
     parameters = {}
-    parameters["offset"] = episode
+    parameters["ep_offset"] = episode
     with open(os.path.join(path, "parameters.json"), 'w') as fp:
       json.dump(parameters, fp)
   
   def load_parameters(self, path):
     with open(os.path.join(path, "parameters.json"), 'r') as fp:
       parameters = json.load(fp)
-      self.offset = parameters["offset"]
+      self.ep_offset = parameters["ep_offset"]
