@@ -113,6 +113,7 @@ class DQN:
       epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, episode)
 
       self.writer.add_scalar(self.tensorboard_dir + "train/sum_rewards", sum_rewards, episode)
+      self.writer.add_scalar(self.tensorboard_dir + "train/survived_steps", total_steps, episode)
       self.writer.flush()
 
       print(f"({episode+1}/{self.offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_rewards:.2f}")
@@ -129,7 +130,6 @@ class DQN:
     action_idx = np.argmax(qs)
     return self.agent.all_actions[action_idx]
 
-  
 
   # Save and load functions
   def save_nn(self, path):
