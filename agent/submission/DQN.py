@@ -3,6 +3,7 @@ import random
 from collections import deque
 import os
 import json
+from torch.utils.tensorboard import SummaryWriter
 from .utils import RANDOM_SEED
 
 np.random.seed(RANDOM_SEED)
@@ -12,12 +13,22 @@ class DQN:
   def __init__(self, agent, loosing_reward, create_nn):
     self.agent = agent
     self.loosing_reward = loosing_reward
-    self.ep_offset = 0
+    self.offset = 0
 
     self.main_nn = create_nn()
     self.target_nn = create_nn()
     self.main_nn.copy_weights(self.target_nn)
 
+    self.tensorboard_dir = "logs/"
+    self.writer = SummaryWriter()
+    self.fit_count = 0
+    self.writer_add_stats = (lambda dir, value, epoch:
+                                self.writer.add_scalar(self.tensorboard_dir + dir,
+                                                       value,
+                                                       epoch + self.fit_count))
+
+  def __del__(self):
+    self.writer.close()
 
   def learn(self, replay_memory):
     batch_size = 128
@@ -48,7 +59,8 @@ class DQN:
       X[i] = obs
       y[i] = current_qs    
     
-    self.main_nn.fit(X, y, batch_size, shuffle=True)
+    self.main_nn.fit(X, y, batch_size, shuffle=True, tensorboard_writer=self.writer_add_stats)
+    self.fit_count += 1
 
   @staticmethod
   def compute_epsilon(min_eps, max_eps, decay, episode):
@@ -63,16 +75,16 @@ class DQN:
     max_epsilon = 1
     min_epsilon = 0.001
     decay = 0.01
-    epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, self.ep_offset)
+    epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, self.offset)
 
     replay_memory = deque(maxlen=max_replay_memory)
     steps_update = 0
 
-    for episode in range(self.ep_offset, self.ep_offset + nb_episodes):
+    for episode in range(self.offset, self.offset + nb_episodes):
       obs = self.agent.convert_obs(env.reset())
       done = False
 
-      sum_reward = 0
+      sum_rewards = 0
       total_steps = 0
       while not done:
         total_steps += 1
@@ -91,7 +103,7 @@ class DQN:
           self.learn(replay_memory)
 
         obs = new_obs
-        sum_reward += reward
+        sum_rewards += reward
       
       if steps_update >= target_update_step:
         print("\033[92m"+"Copying main network weights to the target network" + "\033[0m")
@@ -100,49 +112,40 @@ class DQN:
 
       epsilon = self.compute_epsilon(min_epsilon, max_epsilon, decay, episode)
 
-      print(f"({episode+1}/{self.ep_offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_reward:.2f}")
+      self.writer.add_scalar(self.tensorboard_dir + "train/sum_rewards", sum_rewards, episode)
+      self.writer.add_scalar(self.tensorboard_dir + "train/survived_steps", total_steps, episode)
+      self.writer.flush()
+
+      print(f"({episode+1}/{self.offset + nb_episodes}) Survived steps: {total_steps} total reward: {sum_rewards:.2f}")
 
       # Save the network and parameters every 100 episodes
       if (episode + 1) % 100 == 0:
         self.save_nn(path)
         self.save_parameters(episode, path)
 
-
-  # Functions used to choose the best action
-  def choose_max_action(self, obs, qs):
-    # If the best action is loosing, choose the next best one
-    for _ in qs:
-      action_idx = np.argmax(qs)
-      _, reward, _, _ = obs.simulate(self.agent.all_actions[action_idx])
-      if reward == self.loosing_reward:
-        qs[action_idx] = -np.inf
-      else: return action_idx
-    # If every action are loosing, choose the first one
-    return 0
-
+  # Function used to choose the best action
   def select_action(self, obs):
     obs_converted = self.agent.convert_obs(obs)
     qs = self.main_nn.predict(np.expand_dims(obs_converted, axis=0)).flatten()
-    action_idx = self.choose_max_action(obs, qs)
+    action_idx = np.argmax(qs)
     return self.agent.all_actions[action_idx]
 
-  
 
   # Save and load functions
   def save_nn(self, path):
-    self.main_nn.save(os.path.join(path, "main_nn.h5"))
+    self.main_nn.save(os.path.join(path, "main_nn.pth"))
   
   def load_nn(self, path):
-    self.main_nn.load(os.path.join(path, "main_nn.h5"))
+    self.main_nn.load(os.path.join(path, "main_nn.pth"))
     self.main_nn.copy_weights(self.target_nn)
 
   def save_parameters(self, episode, path):
     parameters = {}
-    parameters["ep_offset"] = episode
+    parameters["offset"] = episode
     with open(os.path.join(path, "parameters.json"), 'w') as fp:
       json.dump(parameters, fp)
   
   def load_parameters(self, path):
     with open(os.path.join(path, "parameters.json"), 'r') as fp:
       parameters = json.load(fp)
-      self.ep_offset = parameters["ep_offset"]
+      self.offset = parameters["offset"]
